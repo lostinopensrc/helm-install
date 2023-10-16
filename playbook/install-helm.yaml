@@ -1,0 +1,24 @@
+---
+- name: Install Helm
+  hosts: homelab
+  become: yes
+  vars:
+    helm_version: "v3.13.1"
+    helm_install_dir: "/usr/local/bin"
+  tasks:
+    - name: Download Helm
+      get_url:
+        url: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+        dest: "/tmp/helm-{{ helm_version }}-linux-amd64.tar.gz"
+
+    - name: Extract Helm
+      ansible.builtin.unarchive:
+        src: "/tmp/helm-{{ helm_version }}-linux-amd64.tar.gz"
+        dest: "/tmp"
+        remote_src: yes
+
+    - name: Move Helm binary to the desired directory
+      ansible.builtin.copy:
+        src: "/tmp/linux-amd64/helm"
+        dest: "{{ helm_install_dir }}"
+        mode: 'a+x'
